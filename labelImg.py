@@ -350,7 +350,7 @@ class MainWindow(QMainWindow, WindowMixin):
         create = action(getStr('crtBox'), self.createShape,
                         'w', 'new', getStr('crtBoxDetail'), enabled=False)
         delete = action(getStr('delBox'), self.deleteSelectedShape,
-                        'Delete', 'delete', getStr('delBoxDetail'), enabled=False)
+                        'delete', 'delete', getStr('delBoxDetail'), enabled=False)
         deleteSeries = action('Delete Rectbox by IoU', self.deleteSeries,
                         'Ctrl+Delete', 'deleteSeries', 'This func is configued through variable MAX_IOU_FOR_DELETE', enabled=False)
         addSeries = action('Add Rectboxs by Series', self.addSelectedShape,
@@ -413,9 +413,33 @@ class MainWindow(QMainWindow, WindowMixin):
         edit2 = action(getStr('editLabel'), self.editLabel2,
                        '2', 'edit', getStr('editLabelDetail'),
                        enabled=False)
+        edit3 = action(getStr('editLabel'), self.editLabel3,
+                       '3', 'edit', getStr('editLabelDetail'),
+                       enabled=False)
+        edit4 = action(getStr('editLabel'), self.editLabel4,
+                       '4', 'edit', getStr('editLabelDetail'),
+                       enabled=False)
+        edit5 = action(getStr('editLabel'), self.editLabel5,
+                       '5', 'edit', getStr('editLabelDetail'),
+                       enabled=False)
+        edit6 = action(getStr('editLabel'), self.editLabel6,
+                       '6', 'edit', getStr('editLabelDetail'),
+                       enabled=False)
+        edit7 = action(getStr('editLabel'), self.editLabel7,
+                       '7', 'edit', getStr('editLabelDetail'),
+                       enabled=False)
+        edit8 = action(getStr('editLabel'), self.editLabel8,
+                       '8', 'edit', getStr('editLabelDetail'),
+                       enabled=False)
         self.editButton.setDefaultAction(edit)
         self.editButton.setDefaultAction(edit1)
         self.editButton.setDefaultAction(edit2)
+        self.editButton.setDefaultAction(edit3)
+        self.editButton.setDefaultAction(edit4)
+        self.editButton.setDefaultAction(edit5)
+        self.editButton.setDefaultAction(edit6)
+        self.editButton.setDefaultAction(edit7)
+        self.editButton.setDefaultAction(edit8)
 
         shapeLineColor = action(getStr('shapeLineColor'), self.chshapeLineColor,
                                 icon='color_line', tip=getStr('shapeLineColorDetail'),
@@ -445,7 +469,7 @@ class MainWindow(QMainWindow, WindowMixin):
         # Store actions for further handling.
         self.actions = struct(save=save, save_format=save_format, saveAs=saveAs, open=open, close=close, resetAll = resetAll, deleteImg = deleteImg,
                               lineColor=color1, create=create, delete=delete, deleteSeries=deleteSeries, addSeries=addSeries, edit=edit,edit1=edit1,
-                              edit2=edit2, copy=copy, createMode=createMode, editMode=editMode, advancedMode=advancedMode,
+                              edit2=edit2, edit3=edit3, edit4=edit4, edit5=edit5, edit6=edit6, edit7=edit7, edit8=edit8, copy=copy, createMode=createMode, editMode=editMode, advancedMode=advancedMode,
                               shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
                               zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
                               fitWindow=fitWindow, fitWidth=fitWidth,
@@ -989,6 +1013,90 @@ class MainWindow(QMainWindow, WindowMixin):
             self.setDirty()
             self.updateComboBox()
 
+    def editLabel3(self):
+        if not self.canvas.editing():
+            return
+        item = self.currentItem()
+        if not item:
+            return
+        if len(self.labelHist) >= 1:
+            text = self.labelHist[2]
+        if text is not None:
+            item.setText(text)
+            item.setBackground(generateColorByText(text))
+            self.setDirty()
+            self.updateComboBox()
+
+    def editLabel4(self):
+        if not self.canvas.editing():
+            return
+        item = self.currentItem()
+        if not item:
+            return
+        if len(self.labelHist) >= 1:
+            text = self.labelHist[3]
+        if text is not None:
+            item.setText(text)
+            item.setBackground(generateColorByText(text))
+            self.setDirty()
+            self.updateComboBox()
+
+    def editLabel5(self):
+        if not self.canvas.editing():
+            return
+        item = self.currentItem()
+        if not item:
+            return
+        if len(self.labelHist) >= 1:
+            text = self.labelHist[4]
+        if text is not None:
+            item.setText(text)
+            item.setBackground(generateColorByText(text))
+            self.setDirty()
+            self.updateComboBox()
+
+    def editLabel6(self):
+        if not self.canvas.editing():
+            return
+        item = self.currentItem()
+        if not item:
+            return
+        if len(self.labelHist) >= 1:
+            text = self.labelHist[5]
+        if text is not None:
+            item.setText(text)
+            item.setBackground(generateColorByText(text))
+            self.setDirty()
+            self.updateComboBox()
+
+    def editLabel7(self):
+        if not self.canvas.editing():
+            return
+        item = self.currentItem()
+        if not item:
+            return
+        if len(self.labelHist) >= 1:
+            text = self.labelHist[6]
+        if text is not None:
+            item.setText(text)
+            item.setBackground(generateColorByText(text))
+            self.setDirty()
+            self.updateComboBox()
+
+    def editLabel8(self):
+        if not self.canvas.editing():
+            return
+        item = self.currentItem()
+        if not item:
+            return
+        if len(self.labelHist) >= 1:
+            text = self.labelHist[7]
+        if text is not None:
+            item.setText(text)
+            item.setBackground(generateColorByText(text))
+            self.setDirty()
+            self.updateComboBox()
+
     # Tzutalin 20160906 : Add file list and dock to move faster
     def fileitemDoubleClicked(self, item=None):
         currIndex = self.mImgList.index(ustr(item.text()))
@@ -1067,6 +1175,12 @@ class MainWindow(QMainWindow, WindowMixin):
         self.actions.edit.setEnabled(selected)
         self.actions.edit1.setEnabled(selected)
         self.actions.edit2.setEnabled(selected)
+        self.actions.edit3.setEnabled(selected)
+        self.actions.edit4.setEnabled(selected)
+        self.actions.edit5.setEnabled(selected)
+        self.actions.edit6.setEnabled(selected)
+        self.actions.edit7.setEnabled(selected)
+        self.actions.edit8.setEnabled(selected)
         self.actions.shapeLineColor.setEnabled(selected)
         self.actions.shapeFillColor.setEnabled(selected)
 
@@ -1445,8 +1559,8 @@ class MainWindow(QMainWindow, WindowMixin):
 
             # Default : select last item if there is at least one item
             if self.labelList.count():
-                self.labelList.setCurrentItem(self.labelList.item(self.labelList.count()-1))
-                self.labelList.item(self.labelList.count()-1).setSelected(True)
+               self.labelList.setCurrentItem(self.labelList.item(self.labelList.count()-1))
+               self.labelList.item(self.labelList.count()-1).setSelected(True)
 
             self.canvas.setFocus(True)
             return True

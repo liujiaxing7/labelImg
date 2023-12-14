@@ -50,10 +50,10 @@ class YOLOv5(object):
 
                     w = IMAGE_SIZE_YOLOV5 / max(oriX, oriY)
 
-                    y = (y - (IMAGE_SIZE_YOLOV5 - w * oriY) / 2) / w
-                    y2 = (y2 - (IMAGE_SIZE_YOLOV5 - w * oriY) / 2) / w
-                    x = (x - (IMAGE_SIZE_YOLOV5 - w * oriX) / 2) / w
-                    x2 = (x2 - (IMAGE_SIZE_YOLOV5 - w * oriX) / 2) / w
+                    y = (y - (IMAGE_SIZE_YOLOV5 - w * oriY) / 2) / w + 1
+                    y2 = (y2 - (IMAGE_SIZE_YOLOV5 - w * oriY) / 2) / w + 1
+                    x = (x - (IMAGE_SIZE_YOLOV5 - w * oriX) / 2) / w + 1
+                    x2 = (x2 - (IMAGE_SIZE_YOLOV5 - w * oriX) / 2) / w + 1
 
                     x, y, x2, y2, score, label = int(x), int(y), int(x2), int(y2), float(score), int(label)
                     shapes.append((self.classes[label], [(x, y), (x2, y), (x2, y2), (x, y2)], None, None, False, 0))
