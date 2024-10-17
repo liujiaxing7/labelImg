@@ -16,6 +16,8 @@ from PyQt5 import QtGui
 
 CURRENT_DIR = os.path.dirname(__file__)
 
+img_list_len = 0
+bj = 0
 try:
     from PyQt5.QtGui import *
     from PyQt5.QtCore import *
@@ -1572,7 +1574,14 @@ class MainWindow(QMainWindow, WindowMixin):
 
             self.showBoundingBoxFromAnnotationFile(filePath)
 
-            self.setWindowTitle(__appname__ + ' ' + filePath)
+            # self.setWindowTitle(__appname__ + ' ' + filePath)
+
+            if img_list_len == 0:
+                self.setWindowTitle(__appname__ + ' ' + filePath)
+            else:
+                self.setWindowTitle(
+                __appname__ + ' ' + filePath + " " + str(bj) + "--" + str(img_list_len) + " {}%\r".format(
+                    round(bj / img_list_len * 100, 1)))
 
             # Default : select last item if there is at least one item
             if self.labelList.count():
@@ -1771,6 +1780,8 @@ class MainWindow(QMainWindow, WindowMixin):
             item = QListWidgetItem(imgPath)
             self.fileListWidget.addItem(item)
 
+        global img_list_len
+        img_list_len = len(self.mImgList)
         print("image num: ", len(self.mImgList))
 
         return self
@@ -1815,8 +1826,11 @@ class MainWindow(QMainWindow, WindowMixin):
         currIndex = self.mImgList.index(self.filePath)
         if currIndex - 1 >= 0:
             filename = self.mImgList[currIndex - 1]
+            global bj
+            bj = currIndex
             if filename:
                 self.loadFile(filename)
+            img_index = currIndex
 
     def openNextImg(self, _value=False):
         # Proceding prev image without dialog if having any label
@@ -1842,7 +1856,9 @@ class MainWindow(QMainWindow, WindowMixin):
             currIndex = self.mImgList.index(self.filePath)
             if currIndex + 1 < len(self.mImgList):
                 filename = self.mImgList[currIndex + 1]
-
+                img_index = currIndex + 2
+                global bj
+                bj = img_index
         if filename:
             self.loadFile(filename)
 
