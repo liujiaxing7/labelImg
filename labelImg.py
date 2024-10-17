@@ -311,7 +311,7 @@ class MainWindow(QMainWindow, WindowMixin):
                              'a', 'prev', getStr('prevImgDetail'))
 
         verify = action(getStr('verifyImg'), self.verifyImg,
-                        'space', 'verify', getStr('verifyImgDetail'))
+                        '', 'verify', getStr('verifyImgDetail'))
 
         save = action(getStr('save'), self.saveFile,
                       'Ctrl+S', 'save', getStr('saveDetail'), enabled=False)
@@ -352,7 +352,7 @@ class MainWindow(QMainWindow, WindowMixin):
         create = action(getStr('crtBox'), self.createShape,
                         'w', 'new', getStr('crtBoxDetail'), enabled=False)
         delete = action(getStr('delBox'), self.deleteSelectedShape,
-                        'delete', 'delete', getStr('delBoxDetail'), enabled=False)
+                        'space', 'delete', getStr('delBoxDetail'), enabled=False)
         deleteSeries = action('Delete Rectbox by IoU', self.deleteSeries,
                         'Ctrl+Delete', 'deleteSeries', 'This func is configued through variable MAX_IOU_FOR_DELETE', enabled=False)
         addSeries = action('Add Rectboxs by Series', self.addSelectedShape,
@@ -1992,17 +1992,22 @@ class MainWindow(QMainWindow, WindowMixin):
                 return
 
     def autoThreadFunc(self):
+
         if self.fullyAutoMode:
-            next_id = self.mImgList.index(self.filePath) + 1
-            tlen = len(self.mImgList)
-            print("processing {} , total {} |{}{}|\r".format(next_id, tlen, "*"*int(float(next_id/tlen)*50),
-                                                                                    " "*int(float(1-next_id/tlen)*50)))
-            if next_id <= tlen:
-                self.auto()
-                self.openNextImg()
-            if next_id == tlen:
-                self.timer4autolabel.stop()
-                autoLabel.setText("Fully autoLabel")
+            try:
+                next_id = self.mImgList.index(self.filePath) + 1
+                tlen = len(self.mImgList)
+                print("processing {} , total {} |{}{}|\r".format(next_id, tlen, "*"*int(float(next_id/tlen)*50),
+                                                                                        " "*int(float(1-next_id/tlen)*50)))
+                if next_id <= tlen:
+                    self.auto()
+                    self.openNextImg()
+                if next_id == tlen:
+                    self.timer4autolabel.stop()
+                    autoLabel.setText("Fully autoLabel")
+            except:
+                print(self.filePath)
+
         else:
             self.timer4autolabel.stop()
 
