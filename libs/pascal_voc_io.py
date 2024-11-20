@@ -11,6 +11,7 @@ from libs.ustr import ustr
 
 XML_EXT = '.xml'
 ENCODE_METHOD = DEFAULT_ENCODING
+TCL_NAMES =['shoes', 'bin', 'pedestal', 'wire', 'socket','cat','dog','desk_rect','desk_circle','weighing-scale', 'key', 'person','chair', 'couch', 'bed', 'tvCabinet', 'fridge', 'television', 'washingMachine', 'electricFan', 'remoteControl', 'shoeCabinet']
 
 class PascalVocWriter:
 
@@ -176,6 +177,8 @@ class PascalVocReader:
         for object_iter in xmltree.findall('object'):
             bndbox = object_iter.find("bndbox")
             label = object_iter.find('name').text
+            if label not in TCL_NAMES:
+                continue
             # Add chris
             difficult = False
             if object_iter.find('difficult') is not None:
