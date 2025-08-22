@@ -177,8 +177,8 @@ class PascalVocReader:
         for object_iter in xmltree.findall('object'):
             bndbox = object_iter.find("bndbox")
             label = object_iter.find('name').text
-            if label not in TCL_NAMES:
-                continue
+            # if label not in TCL_NAMES:
+            #     continue
             # Add chris
             difficult = False
             if object_iter.find('difficult') is not None:
