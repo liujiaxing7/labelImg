@@ -89,11 +89,7 @@ class YoloReader:
         self.shapes = []
         self.filepath = filepath
 
-        if classListPath is None:
-            dir_path = os.path.dirname(os.path.realpath(self.filepath))
-            self.classListPath = os.path.join(dir_path, "classes.txt")
-        else:
-            self.classListPath = classListPath
+        self.classListPath = os.path.join(classListPath, "classes.txt")
 
         # print (filepath, self.classListPath)
 
@@ -119,7 +115,7 @@ class YoloReader:
     def addShape(self, label, xmin, ymin, xmax, ymax, difficult):
 
         points = [(xmin, ymin), (xmax, ymin), (xmax, ymax), (xmin, ymax)]
-        self.shapes.append((label, points, None, None, difficult))
+        self.shapes.append((label, points, None, None, difficult, 0, 0))
 
     def yoloLine2Shape(self, classIndex, xcen, ycen, w, h):
         label = self.classes[int(classIndex)]
