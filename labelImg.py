@@ -2285,7 +2285,7 @@ class MainWindow(QMainWindow, WindowMixin):
             return
 
         self.set_format(FORMAT_YOLO)
-        tYoloParseReader = YoloReader(txtPath, self.image, self.lastOpenDir)
+        tYoloParseReader = YoloReader(txtPath, self.image, self.lastOpenDir, self.labelHist)
         shapes = tYoloParseReader.getShapes()
         print (shapes)
         self.loadLabels(shapes)
