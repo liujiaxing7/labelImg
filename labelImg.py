@@ -1891,13 +1891,22 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def _loadImage4Detect(self):
         image = self.image
-        size = image.size()
-        s = image.bits().asstring(size.width() * size.height() * image.depth() // 8)  # format 0xffRRGGBB
-        image = np.fromstring(s, dtype=np.uint8).reshape((size.height(), size.width(), image.depth() // 8))
-        gray = image[:, :, 0]
-        gray = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
+        return self.qimage_to_rgb(image)
 
-        return gray
+    def qimage_to_rgb(self, image: QImage):
+        """Convert any QImage format to numpy RGB(H,W,3) safely."""
+
+        # ⭐ 强制深拷贝，Qt 所有格式都能正确转成 RGB888 + 稳定内存
+        image = image.convertToFormat(QImage.Format_RGB888).copy()
+
+        w, h = image.width(), image.height()
+        ptr = image.bits()
+        ptr.setsize(image.byteCount())
+
+        # ⭐ RGB888 is always H × W × 3, continuous bytes
+        rgb = np.frombuffer(ptr, np.uint8).reshape((h, w, 3)).copy()
+
+        return rgb
 
     def load_classes(self):
         self.classes = {}
