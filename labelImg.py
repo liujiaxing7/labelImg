@@ -1894,19 +1894,28 @@ class MainWindow(QMainWindow, WindowMixin):
         return self.qimage_to_rgb(image)
 
     def qimage_to_rgb(self, image: QImage):
-        """Convert any QImage format to numpy RGB(H,W,3) safely."""
+        """Convert any QImage to an RGB numpy array (H, W, 3) safely."""
 
-        # ⭐ 强制深拷贝，Qt 所有格式都能正确转成 RGB888 + 稳定内存
-        image = image.convertToFormat(QImage.Format_RGB888).copy()
+        # 统一转为 RGB888（Qt 会自动从任意格式转）
+        img = image.convertToFormat(QImage.Format_RGB888)
 
-        w, h = image.width(), image.height()
-        ptr = image.bits()
-        ptr.setsize(image.byteCount())
+        w, h = img.width(), img.height()
+        bytes_per_line = img.bytesPerLine()
 
-        # ⭐ RGB888 is always H × W × 3, continuous bytes
-        rgb = np.frombuffer(ptr, np.uint8).reshape((h, w, 3)).copy()
+        ptr = img.bits()
+        ptr.setsize(img.byteCount())
 
-        return rgb
+        # Qt 的图像每行可能有 padding，用 bytes_per_line 处理
+        arr = np.frombuffer(ptr, dtype=np.uint8).reshape((h, bytes_per_line))
+
+        # 裁掉 padding（只保留真正的像素数据）
+        arr = arr[:, :w * 3]
+
+        # reshape 成 RGB(H, W, 3)
+        rgb = arr.reshape((h, w, 3))
+
+        # 返回独立内存，防止 Qt 再释放导致崩溃
+        return rgb.copy()
 
     def load_classes(self):
         self.classes = {}
