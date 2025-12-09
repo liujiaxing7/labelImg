@@ -55,18 +55,16 @@ def letterBox(img, new_shape=416, color=(128, 128, 128), mode='auto', interp=cv2
 
 
 def preProcessPadding(inp_img):
-    if len(inp_img.shape) == 3:
-        gray = inp_img[:, :, 0]
+    if len(inp_img.shape) == 2:
+        gray = cv2.cvtColor(inp_img, cv2.COLOR_GRAY2RGB)
     else:
-        gray = inp_img[:, :]
-    gray = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
+        gray = inp_img
 
     image, ratio, dw, dh = letterBox(gray, new_shape=320, mode='square')
 
-    img = np.half(image)
-    img /= 255.0
+    img = image.astype(np.float32) / 255.0
     if img.shape[-1] == 3:
         img = np.expand_dims(img, 0)
     img = np.transpose(img, (0, 3, 1, 2)).astype(np.float32)
 
-    return img.astype(np.float32)
+    return img

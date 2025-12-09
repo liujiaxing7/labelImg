@@ -72,17 +72,19 @@ from libs.detector.yolov5.model import YOLOv5
 from libs.detector.yolov3.model import YOLOv3
 from libs.detector.mobileNetv2.model import MobileNetV2
 from libs.detector.yolov3.postprocess.postprocess import load_class_names, weighted_nms
+from libs.detector.yolov11.model import YOLOv11Pose
 
 
 onnxModelIndex = 0
-MODEL_PARAMS = {0: "_SSD", 1: "_CENTER_NET", 2: "_YOLOv5", 3: "_YOLOv5s", 4: "_YOLOv5_i18R", 5: "_YOLOv3", 6: "_MobileNetV2"}  # TODO models later should be added here
+MODEL_PARAMS = {0: "_SSD", 1: "_CENTER_NET", 2: "_YOLOv5", 3: "_YOLOv5s", 4: "_YOLOv5_i18R", 5: "_YOLOv3", 6: "_MobileNetV2", 7: "_YOLOv11s_POSE"}  # TODO models later should be added here
 MODEL_PATH = {"_SSD": "config/cleaner/ssd.onnx",
               "_CENTER_NET": "config/human/centernet.onnx",
               "_YOLOv5": "config/human/yolov5.onnx",
               "_YOLOv5s": "config/human/yolov5s.onnx",
               "_YOLOv5_i18R": "config/i18R/yolov5X.onnx",
               "_YOLOv3": "config/i18R/yolov3.onnx",
-              "_MobileNetV2": "config/rubby/mobilenetV2.onnx"}
+              "_MobileNetV2": "config/rubby/mobilenetV2.onnx",
+              "_YOLOv11s_POSE": "config/human/yolov11s-pose.onnx"}
 MAX_IOU_FOR_DELETE = 0.6
 ADD_RECTBOX_BY_SERIES_NUM = 10
 IOU_NMS = 0.5
@@ -589,7 +591,13 @@ class MainWindow(QMainWindow, WindowMixin):
         self.model6.setChecked(False)
         self.model6.triggered.connect(self.changeStatusModel6)
 
-        addActions(self.menus.models, (self.model0, self.model1, self.model2, self.model3, self.model4, self.model5, self.model6))
+        self.YOLOv11Pose = None
+        self.model7 = QAction("YOLOV11_Pose", self)
+        self.model7.setCheckable(True)
+        self.model7.setChecked(False)
+        self.model7.triggered.connect(self.changeStatusModel7)
+
+        addActions(self.menus.models, (self.model0, self.model1, self.model2, self.model3, self.model4, self.model5, self.model6, self.model7))
 
         addActions(self.menus.file,
                    (open, opendir, copyPrevBounding, changeSavedir, openAnnotation, self.menus.recentFiles, save, save_format, saveAs, close, resetAll, deleteImg, quit))
@@ -706,7 +714,7 @@ class MainWindow(QMainWindow, WindowMixin):
             self.openDirDialog(dirpath=self.filePath, silent=True)
 
         # Models to be used to inference are controlled in this dict
-        self.theseModels = {0: False, 1: True, 2: False, 3: False, 4: False, 5: False, 6: False}    # by default, CenterNet is used for inference
+        self.theseModels = {0: False, 1: True, 2: False, 3: False, 4: False, 5: False, 6: False, 7: False}    # by default, CenterNet is used for inference
 
 
     def _loadClassNames4Detect(self):
@@ -934,6 +942,15 @@ class MainWindow(QMainWindow, WindowMixin):
         global onnxModelIndex
         onnxModelIndex = 6
         if self.model6.isChecked():
+            self.theseModels[onnxModelIndex] = True
+        else:
+            self.theseModels[onnxModelIndex] = False
+
+    def changeStatusModel7(self):
+        # YOLOv3
+        global onnxModelIndex
+        onnxModelIndex = 7
+        if self.model7.isChecked():
             self.theseModels[onnxModelIndex] = True
         else:
             self.theseModels[onnxModelIndex] = False
@@ -1969,7 +1986,11 @@ class MainWindow(QMainWindow, WindowMixin):
                     self.MobileNetV2 = MobileNetV2(os.path.join(CURRENT_DIR, MODEL_PATH[MODEL_PARAMS[6]]),
                                          self.classes[MODEL_PARAMS[6]])
                 elif self.theseModels[6]:self.YOLOv3.class_sel = self.classes[MODEL_PARAMS[6]]
-
+                
+                if self.theseModels[7] and self.YOLOv11Pose is None:
+                    self.YOLOv11Pose = YOLOv11Pose(os.path.join(CURRENT_DIR, MODEL_PATH[MODEL_PARAMS[7]]),
+                                         self.classes[MODEL_PARAMS[7]])
+                elif self.theseModels[7]:self.YOLOv11Pose.class_sel = self.classes[MODEL_PARAMS[7]]
 
                 self.auto()
             else:
@@ -2017,6 +2038,11 @@ class MainWindow(QMainWindow, WindowMixin):
                         self.MobileNetV2 = MobileNetV2(os.path.join(CURRENT_DIR, MODEL_PATH[MODEL_PARAMS[6]]),
                                              class_sel[MODEL_PARAMS[6]])
                     elif self.theseModels[6]:self.MobileNetV2.class_sel = class_sel[MODEL_PARAMS[6]]
+                    
+                    if self.theseModels[7] and self.YOLOv11Pose is None:
+                        self.YOLOv11Pose = YOLOv11Pose(os.path.join(CURRENT_DIR, MODEL_PATH[MODEL_PARAMS[7]]),
+                                             class_sel[MODEL_PARAMS[7]])
+                    elif self.theseModels[7]:self.YOLOv11Pose.class_sel = class_sel[MODEL_PARAMS[7]]
 
                     self.timer4autolabel.start(20)
                     self.timer4autolabel.timeout.connect(self.autoThreadFunc)
@@ -2092,6 +2118,9 @@ class MainWindow(QMainWindow, WindowMixin):
     
     def autoLabel_MobileNetV2(self):
         return self.MobileNetV2.forward(self._loadImage4Detect())
+
+    def autoLabel_YOLOv11s_POSE(self):
+        return self.YOLOv11Pose.forward(self._loadImage4Detect())
 
     def saveFile(self, _value=False):
         if self.defaultSaveDir is not None and len(ustr(self.defaultSaveDir)):
