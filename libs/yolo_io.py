@@ -69,7 +69,7 @@ class YOLOWriter:
         for box in self.boxlist:
             classIndex, xcen, ycen, w, h = self.BndBox2YoloLine(box, classList)
             # print (classIndex, xcen, ycen, w, h)
-            out_file.write("%d %.6f %.6f %.6f %.6f\n" % (classIndex, xcen, ycen, w, h))
+            out_file.write("%d %.17g %.17g %.17g %.17g\n" % (classIndex, xcen, ycen, w, h))
 
         # print (classList)
         # print (out_class_file)
@@ -124,10 +124,10 @@ class YoloReader:
         ymin = max(float(ycen) - float(h) / 2, 0)
         ymax = min(float(ycen) + float(h) / 2, 1)
 
-        xmin = int(self.imgSize[1] * xmin)
-        xmax = int(self.imgSize[1] * xmax)
-        ymin = int(self.imgSize[0] * ymin)
-        ymax = int(self.imgSize[0] * ymax)
+        xmin = int(round(self.imgSize[1] * xmin))
+        xmax = int(round(self.imgSize[1] * xmax))
+        ymin = int(round(self.imgSize[0] * ymin))
+        ymax = int(round(self.imgSize[0] * ymax))
 
         return label, xmin, ymin, xmax, ymax
 
