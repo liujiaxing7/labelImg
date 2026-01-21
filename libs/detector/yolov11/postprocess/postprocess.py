@@ -11,7 +11,7 @@ from yacs.config import CfgNode as CN
 from libs.detector.utils.utils import Softmax
 import cv2
 
-IMAGE_SIZE_YOLOV11 = 640
+IMAGE_SIZE_YOLOV11 = 320
 PIXEL_MEAN = [123, 117, 104]
 THRESHOLD_YOLOV11 = 0.25
 

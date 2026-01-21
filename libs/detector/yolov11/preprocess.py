@@ -59,7 +59,7 @@ def preProcessPadding(inp_img):
     else:
         gray = inp_img
 
-    image, ratio, dw, dh = letterBox(gray, new_shape=640, mode='square')
+    image, ratio, dw, dh = letterBox(gray, new_shape=320, mode='square')
 
     img = image.astype(np.float32) / 255.0
     if img.shape[-1] == 3:
